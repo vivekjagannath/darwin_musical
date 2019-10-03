@@ -91,11 +91,13 @@ omsom = "la1 ra1s 0.5 lfn 0.4 rs 0.2 lfn 0.4 rs 0.2 lfn 0.4 rs 0.2 lfn 0.1 lg1 0
          lfn 0.4 rn 0.2 lfn 0.4 rn 0.2 lfn 0.4 rn 0.2 lfn 0.1 le1 0.15 lfn 0.15 ld1 0.05 re1 lfn 0.4\
          lfn 0.4 rn 0.2 lfn 0.4 rn 0.2 lfn 0.4 rn 0.2 lfn 0.1 lc1 0.15 lfn 0.2 las 0.2 ls 0.2 init"
 
+chinni = "lc1 re1 0.3 lfn 0.1 ld1 0.2 rn 0.1 rf1 0.2 lfn 0.1 le1 0.2 rn 0.3 lfn 0.2 lfn"
+
 d.set_goal_position(positions["init"])
 input("start?")
 print("starting...")
 time.sleep(1)
-for i in omsom.split():
+for i in chinni.split():
     try:
         time.sleep(float(i))
     except ValueError:
