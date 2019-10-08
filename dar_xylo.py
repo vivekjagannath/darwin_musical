@@ -97,7 +97,7 @@ d.set_goal_position(positions["init"])
 input("start?")
 print("starting...")
 time.sleep(1)
-for i in chinni.split():
+for i in rtest.split():
     try:
         time.sleep(float(i))
     except ValueError:
