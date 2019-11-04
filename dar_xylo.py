@@ -1,10 +1,9 @@
 import dxl
 import time
+import numpy as np
+import cv2
 
-moved=0
-move=0
-section=2
-radius=20
+
 a = dxl.get_available_ports()
 print(a)
 d = dxl.dxl(a[0], 1000000)
@@ -39,7 +38,7 @@ def knock(a):
 see={1:{19:2343,20:2443},2:{19:1963,20:2443},3:{19:1499,20:2443}}
 
 positions = {
-    "init": {2: 1100, 4: 2702, 6: 2048, 1: 3000, 3: 1475, 5: 1819, 19: 1963, 20: 2443},
+    "init": {19: 1963, 20: 2443},
     "lg": {4: 2576, 6: 2642, 19: 2401},
     "lgs": {4: 2094, 6: 1929, 19: 2401},
     "la": {4: 2653, 6: 2712, 19: 2401},
@@ -136,110 +135,142 @@ time.sleep(1)
 #             knock(i)
 
 
-# def dekhdekhdekh():
-import numpy as np
-import cv2
-u=115
-v=195
-area=[]
-avarea=[]
-kernel = np.ones((5,5),np.uint8)
-cap=cv2.VideoCapture(1)
-lastx,lasty=0,0
-numberoftimes=0
-while True:
-
-        # Take each frame
-        _, frame = cap.read()
-        gr=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-        grad_x = cv2.Sobel(gr, cv2.CV_16S, 1, 0, ksize=3, scale=1, delta=0, borderType=cv2.BORDER_DEFAULT)
-        abs_grad_x = cv2.convertScaleAbs(grad_x)
-        grad_y = cv2.Sobel(gr, cv2.CV_16S, 0, 1, ksize=3, scale=1, delta=0, borderType=cv2.BORDER_DEFAULT)
-        abs_grad_y = cv2.convertScaleAbs(grad_y)
-        grad = cv2.addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0)
-
-     
+def dekhdekhdekh(lastx):
+    if lastx<320 :
+        print("go left")
+        return -1
 
 
-        # Convert BGR to HSV
-        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
+    elif lastx>320:
+        print("go right")
+        return 1
+def wow():
+    moved=1
+    move=0
+    section=2
+    radius=20
+    u=80
+    v=107
+    area=[]
+    avarea=[]
+    kernel = np.ones((5,5),np.uint8)
+    cap=cv2.VideoCapture(1)
+    lastx,lasty=0,0
+    x,y=0,0
+    numberoftimes=0
+    while True:
 
-        # define range of blue color in HSV
-        lower_color = np.array([0,u-30,v-30])
-        upper_color = np.array([255,u+30,v+30])
+            # Take each frame
+            _, frame = cap.read()
+            gr=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+            grad_x = cv2.Sobel(gr, cv2.CV_16S, 1, 0, ksize=3, scale=1, delta=0, borderType=cv2.BORDER_DEFAULT)
+            abs_grad_x = cv2.convertScaleAbs(grad_x)
+            grad_y = cv2.Sobel(gr, cv2.CV_16S, 0, 1, ksize=3, scale=1, delta=0, borderType=cv2.BORDER_DEFAULT)
+            abs_grad_y = cv2.convertScaleAbs(grad_y)
+            grad = cv2.addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0)
 
-        # Threshold the HSV image to get only blue colors
-        mask = cv2.inRange(hsv, lower_color, upper_color)
+        
 
-        # Bitwise-AND mask and original image
-        # res = cv2.bitwise_and(frame,frame, mask= mask)
 
-        #cv2.imshow('mask',mask)
-    
-        thresh=cv2.Canny(mask,100,200)
+            # Convert BGR to HSV
+            hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
 
-        contours1, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        # print(len(contours1))
-        if radius <20:
-            if lastx<320:
-                move=-1
-                print("go left",numberoftimes)
+            # define range of blue color in HSV
+            lower_color = np.array([0,u-30,v-30])
+            upper_color = np.array([255,u+30,v+30])
 
-            elif lastx>320:
-                move=1
-                print("go right",numberoftimes)
+            # Threshold the HSV image to get only blue colors
+            mask = cv2.inRange(hsv, lower_color, upper_color)
+
+            # Bitwise-AND mask and original image
+            # res = cv2.bitwise_and(frame,frame, mask= mask)
+
+            #cv2.imshow('mask',mask)
+        
+            thresh=cv2.Canny(mask,100,200)
+
+            contours1, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            # print(len(contours1))
+
 
             flag=1
             numberoftimes=numberoftimes+1
-        # cv2.drawContours(res, contours1, -1 , (0,0,255), 3)
-        for i in range(len(contours1)):
-                area.append(cv2.contourArea(contours1[i]))
-                flag=0
-        if len(contours1)!=0:
-            (x,y),radius = cv2.minEnclosingCircle(contours1[0])
+            # cv2.drawContours(res, contours1, -1 , (0,0,255), 3)
+            for i in range(len(contours1)):
+                    area.append(cv2.contourArea(contours1[i]))
+                    flag=0
+            if len(contours1)!=0:
+                (x,y),radius = cv2.minEnclosingCircle(contours1[0])
 
-        center = (int(x),int(y))
-        r = int(radius)
-        for i in range(len(contours1)):
-                avarea.append(cv2.contourArea(contours1[i]))
-                (x,y),radius = cv2.minEnclosingCircle(contours1[i])
-                if radius > r:
+            center = (int(x),int(y))
+            r = int(radius)
+            for i in range(len(contours1)):
+                    avarea.append(cv2.contourArea(contours1[i]))
+                    (x,y),radius = cv2.minEnclosingCircle(contours1[i])
+                    if radius > r:
+                            center = (int(x),int(y))
+                            r = int(radius)
+                            ind = i
+
+            if len(contours1)!=0:
+                (x,y),radius = cv2.minEnclosingCircle(contours1[ind])
+            
+            center = (int(x),int(y))
+            radius=int(radius)
+            # print("radius=",radius)
+            # cv2.circle(grad,center,radius,(0,0,255),2)
+            print (center[0],center[1])
+            # cv2.imshow("im3",frame)
+            cv2.circle(grad,center,radius,(255,255,255),-1)
+            cv2.imshow('grad',grad)
+            
+            if radius>19:
+                lastx=x
+                lasty=y
+            
+            contours1, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            if len(contours1)!=0:
+                for i in range(len(contours1)):
+                    avarea.append(cv2.contourArea(contours1[i]))
+                    (x,y),radius = cv2.minEnclosingCircle(contours1[i])
+                    if radius > r:
                         center = (int(x),int(y))
                         r = int(radius)
                         ind = i
+                    (x,y),radius = cv2.minEnclosingCircle(contours1[ind])
 
-        if len(contours1)!=0:
-            (x,y),radius = cv2.minEnclosingCircle(contours1[ind])
-        
-        center = (int(x),int(y))
-        radius = int(radius)
-        # print("radius=",radius)
-        # cv2.circle(grad,center,radius,(0,0,255),2)
-        # print (center[0],center[1])
-        # cv2.imshow("im3",frame)
-        cv2.circle(grad,center,radius,(255,255,255),-1)
-        cv2.imshow('grad',grad)
+            if int(radius)<15:
 
-        if move==-1:
-            if section==3:
-                section=2
-            if section==2:
-                section=1
-            d.set_goal_position(see[section])
+                move=dekhdekhdekh(lastx)
+                if move ==-1:
+                    if section==3:
+                        d.set_goal_position(see[2])
+                        section=2
+                    # if section==2:
+                    #     d.set_goal_position(see[1])
+                    #     section=1
 
-        elif move==1:
-            if section==1:
-                section=2
-            if section==2:
-                section=3
-            d.set_goal_position(see[section])
+                elif move==1:
+                    if section==1:
+                        d.set_goal_position(see[2])
+                        section=2
+                        break
+                if section==2:
+                    if move==1:
+                        d.set_goal_position(see[3])
+                        section=3
+                        break
+                    if move==-1:
+                        d.set_goal_position(see[1])
+                        section=1
+                
+                    
             
+            if cv2.waitKey(5)==27:
+                break
 
-        if radius>19:
-            lastx,lasty=center[0],center[1]
-        # cv2.imshow('res',res)
-        if cv2.waitKey(5)==27:
-            break
+            
+    cv2.destroyAllWindows()
 
-
-cv2.destroyAllWindows()
+while True:
+    wow()
