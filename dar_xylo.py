@@ -11,7 +11,8 @@ print(d.scan(21))
 d.set_torque({i: 1 for i in range(1, 21)})
 d.set_speed({i: 1023 for i in range(1, 7)})
 x,y=0,0
-
+dictio = {19: 2071, 20: 2053}
+d.set_goal_position(dictio)
 def knock(a):
     if a == "ln":
         d.move(2, 1700)
@@ -121,7 +122,7 @@ animals = "lg1s rc2 0.5 ls 0.45 ls 0.2 la1s 0.3 ls 0.5 rn 0.15 rd2s 0.35 rs 0.15
 lc2 = "init 1 la 0.5 ln 1 lb1 0.5 lfn"
 
 ra2s = "rc3 0.5 rn"
-d.set_goal_position(positions["init"])
+
 input("start?")
 print("starting...")
 time.sleep(1)
@@ -149,12 +150,12 @@ def wow():
     move=0
     section=2
     radius=20
-    u=80
-    v=107
+    u=101
+    v=184
     area=[]
     avarea=[]
     kernel = np.ones((5,5),np.uint8)
-    cap=cv2.VideoCapture(1)
+    cap=cv2.VideoCapture(0)
     lastx,lasty=0,0
     x,y=0,0
     numberoftimes=0
@@ -189,7 +190,7 @@ def wow():
         
             thresh=cv2.Canny(mask,100,200)
 
-            contours1, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            _, contours1, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             # print(len(contours1))
 
 
@@ -228,7 +229,7 @@ def wow():
                 lastx=x
                 lasty=y
             
-            contours1, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            _, contours1, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             if len(contours1)!=0:
                 for i in range(len(contours1)):
                     avarea.append(cv2.contourArea(contours1[i]))
